@@ -1,11 +1,18 @@
 from random import randint
 class Game():
-    def __init__(self, human):
+    def __init__(self, human=True):
         self.boardx = 4
         self.boardy = 4
         self.board = [0 for i in range(self.boardx*self.boardy)]
         self.empties = []
         self.human = human
+        self.functions =    {
+                            'w': self.up,
+                            'a': self.left,
+                            's': self.down,
+                            'd': self.right,
+                            }
+        self.step(input())
         pass
 
     def printboard(self):
@@ -37,9 +44,18 @@ class Game():
 
     def getPlayerInput(self):
         action = input()
+        return 
     
     def step(self, action):
-        pass
+        self.functions[action]()
+        self.addRandom()
+        self.printboard()
+        if self.human:
+            new_action = input()
+            if new_action == 'q':
+                return
+            self.step(new_action)
+
 
     def right(self):
         for j in range(4):
@@ -105,11 +121,9 @@ class Game():
 
 
 
-myGame = Game()
+myGame = Game(human=True)
 for i in range(10):
     myGame.addRandom()
 
 myGame.printboard()
 
-myGame.up()
-myGame.printboard()
