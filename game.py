@@ -1,4 +1,5 @@
 from random import randint
+from copy import copy
 class Game():
     def __init__(self, human=True):
         self.boardx = 4
@@ -35,7 +36,6 @@ class Game():
         for i in range(len(self.board)):
             if self.board[i]==0:
                 self.empties.append(i)
-        print(self.empties)
         return self.empties
         
     def coordtoindx(self,x,y):
@@ -48,12 +48,20 @@ class Game():
 
     
     def step(self, action):
+        put_random=True
         self.turn+=1
         self.functions[action]()
+        
         if len(self.getEmpties())==0:
-            self.endGame()
-            return
-        self.addRandom()
+            if self.checkEnd():
+                self.endGame()
+                return
+            else:
+                put_random = False
+
+        if put_random:
+            self.addRandom()
+
         self.printboard()
         if self.human:
             new_action = input()
@@ -62,6 +70,19 @@ class Game():
                 return
             self.step(new_action)
         
+    def checkEnd(self):
+        original = copy(self.board)
+        self.up()
+        if original==self.board:
+            self.right()
+            if original==self.board:
+                self.down()
+                if original==self.board:
+                    self.left()
+                    if original==self.board:
+                        return True
+        self.board = copy(original)    
+        return False
 
     def endGame(self):
         print("########################")
