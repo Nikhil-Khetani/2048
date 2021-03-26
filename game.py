@@ -18,12 +18,12 @@ class Game():
         pass
 
     def printboard(self):
-        print("########################")
+        print("################################################")
         print("")
         for j in range(self.boardy):
-            print(" {}      {}      {}      {}".format(self.board[4*j],self.board[4*j+1],self.board[4*j+2], self.board[4*j+3]))
+            print(" {:5}      {:5}      {:5}      {:5}".format(self.board[4*j],self.board[4*j+1],self.board[4*j+2], self.board[4*j+3]))
             print("")
-        print("########################")
+        print("################################################")
         print("Turn: {}".format(self.turn))
         return
 
@@ -71,12 +71,15 @@ class Game():
             self.addRandom()
 
         self.printboard()
+
         if self.human:
             new_action = self.getUserInput()
             if new_action == 'q':
                 self.endGame()
                 return
             self.step(new_action)
+
+        return self.board
         
     def checkEnd(self):
         original = copy(self.board)
@@ -93,8 +96,8 @@ class Game():
         return False
 
     def endGame(self):
-        print("########################")
-        print("#######GAME OVER########")
+        print("################################################")
+        print("##################GAME OVER#####################")
         self.printboard()
         pass
 
