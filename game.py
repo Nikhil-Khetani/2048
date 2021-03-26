@@ -1,6 +1,6 @@
 from random import randint
 from copy import copy
-class Game():
+class Game2048():
     def __init__(self, human=True):
         self.boardx = 4
         self.boardy = 4
@@ -8,6 +8,7 @@ class Game():
         self.turn = 0
         self.empties = []
         self.human = human
+        self.terminal = False
         self.functions =    {
                             'w': self.up,
                             'a': self.left,
@@ -96,6 +97,7 @@ class Game():
         return False
 
     def endGame(self):
+        self.terminal = True
         print("################################################")
         print("##################GAME OVER#####################")
         self.printboard()
@@ -164,4 +166,4 @@ class Game():
 
 
 if __name__== "__main__":
-    myGame = Game(human=True)
+    myGame = Game2048(human=True)
