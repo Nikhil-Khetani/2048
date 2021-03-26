@@ -1,10 +1,11 @@
 from random import randint
 class Game():
-    def __init__(self):
+    def __init__(self, human):
         self.boardx = 4
         self.boardy = 4
         self.board = [0 for i in range(self.boardx*self.boardy)]
         self.empties = []
+        self.human = human
         pass
 
     def printboard(self):
@@ -33,6 +34,9 @@ class Game():
         x = index%4
         y = int((index-x)/4)
         return x, y
+
+    def getPlayerInput(self):
+        action = input()
     
     def step(self, action):
         pass
@@ -104,7 +108,8 @@ class Game():
 myGame = Game()
 for i in range(10):
     myGame.addRandom()
-    myGame.printboard()
+
+myGame.printboard()
 
 myGame.up()
 myGame.printboard()
