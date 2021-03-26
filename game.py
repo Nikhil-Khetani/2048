@@ -4,6 +4,7 @@ class Game():
         self.boardx = 4
         self.boardy = 4
         self.board = [0 for i in range(self.boardx*self.boardy)]
+        self.turn = 0
         self.empties = []
         self.human = human
         self.functions =    {
@@ -16,15 +17,17 @@ class Game():
         pass
 
     def printboard(self):
-        print("###")
+        
+        print("########################")
         print("")
         for j in range(self.boardy):
-            print("{}      {}      {}      {}".format(self.board[4*j],self.board[4*j+1],self.board[4*j+2], self.board[4*j+3]))
+            print(" {}      {}      {}      {}".format(self.board[4*j],self.board[4*j+1],self.board[4*j+2], self.board[4*j+3]))
             print("")
-        print("###")
+        print("########################")
+        print("Turn: {}".format(self.turn))
+        return
 
     def addRandom(self):
-        self.getEmpties()
         self.board[self.empties[randint(0,len(self.empties)-1)]]=2
     
     def getEmpties(self):
@@ -32,6 +35,7 @@ class Game():
         for i in range(len(self.board)):
             if self.board[i]==0:
                 self.empties.append(i)
+        print(self.empties)
         return self.empties
         
     def coordtoindx(self,x,y):
@@ -42,19 +46,28 @@ class Game():
         y = int((index-x)/4)
         return x, y
 
-    def getPlayerInput(self):
-        action = input()
-        return 
     
     def step(self, action):
+        self.turn+=1
         self.functions[action]()
+        if len(self.getEmpties())==0:
+            self.endGame()
+            return
         self.addRandom()
         self.printboard()
         if self.human:
             new_action = input()
             if new_action == 'q':
+                self.endGame()
                 return
             self.step(new_action)
+        
+
+    def endGame(self):
+        print("########################")
+        print("########GAME OVER#######")
+        self.printboard
+        pass
 
 
     def right(self):
@@ -122,8 +135,6 @@ class Game():
 
 
 myGame = Game(human=True)
-for i in range(10):
-    myGame.addRandom()
 
 myGame.printboard()
 
