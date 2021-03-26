@@ -18,7 +18,6 @@ class Game():
         pass
 
     def printboard(self):
-        print("")
         print("########################")
         print("")
         for j in range(self.boardy):
@@ -48,6 +47,8 @@ class Game():
 
     def getUserInput(self):
         entered = input()
+        print("")
+        print("")
         if (entered == 'w' or entered == 'a' or entered == 's' or entered == 'd' or entered == 'q'):
             return entered
         else:
@@ -93,8 +94,8 @@ class Game():
 
     def endGame(self):
         print("########################")
-        print("########GAME OVER#######")
-        self.printboard
+        print("#######GAME OVER########")
+        self.printboard()
         pass
 
 
@@ -159,10 +160,5 @@ class Game():
                     self.board[self.coordtoindx(i,3-j)] = 0
 
 
-
-
-
-myGame = Game(human=True)
-
-myGame.printboard()
-
+if __name__== "__main__":
+    myGame = Game(human=True)
