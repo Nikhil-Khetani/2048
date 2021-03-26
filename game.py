@@ -10,8 +10,8 @@ class Game():
     def printboard(self):
         print("###")
         print("")
-        for i in range(self.boardy):
-            print("{}      {}      {}      {}".format(self.board[4*i-4],self.board[4*i-3],self.board[4*i-2], self.board[4*i-1]))
+        for j in range(self.boardy):
+            print("{}      {}      {}      {}".format(self.board[4*j],self.board[4*j+1],self.board[4*j+2], self.board[4*j+3]))
             print("")
         print("###")
 
@@ -66,7 +66,38 @@ class Game():
                 if self.board[self.coordtoindx(2-i,j)]==0:
                     self.board[self.coordtoindx(2-i,j)] = self.board[self.coordtoindx(3-i,j)]
                     self.board[self.coordtoindx(3-i,j)] = 0
-        
+    
+    def down(self):
+        for i in range(4):
+            for j in range(3):
+                if self.board[self.coordtoindx(i,j+1)]==0:
+                    self.board[self.coordtoindx(i,j+1)] = self.board[self.coordtoindx(i,j)]
+                    self.board[self.coordtoindx(i,j)] = 0
+                elif self.board[self.coordtoindx(i,j+1)] == self.board[self.coordtoindx(i,j)]:
+                    self.board[self.coordtoindx(i,j+1)] = self.board[self.coordtoindx(i,j+1)] + self.board[self.coordtoindx(i,j)]
+                    self.board[self.coordtoindx(i,j)] = 0
+        for i in range(4):
+            for j in range(3):
+                if self.board[self.coordtoindx(i,j+1)]==0:
+                    self.board[self.coordtoindx(i,j+1)] = self.board[self.coordtoindx(i,j)]
+                    self.board[self.coordtoindx(i,j)] = 0
+    
+    def up(self):
+        for i in range(4):
+            for j in range(3):
+                if self.board[self.coordtoindx(i,2-j)]==0:
+                    self.board[self.coordtoindx(i,2-j)] = self.board[self.coordtoindx(i,3-j)]
+                    self.board[self.coordtoindx(i,3-j)] = 0
+                elif self.board[self.coordtoindx(i,2-j)] == self.board[self.coordtoindx(i,3-j)]:
+                    self.board[self.coordtoindx(i,2-j)] = self.board[self.coordtoindx(i,2-j)] + self.board[self.coordtoindx(i,3-j)]
+                    self.board[self.coordtoindx(i,3-j)] = 0
+        for i in range(4):
+            for j in range(3):
+                if self.board[self.coordtoindx(i,2-j)]==0:
+                    self.board[self.coordtoindx(i,2-j)] = self.board[self.coordtoindx(i,3-j)]
+                    self.board[self.coordtoindx(i,3-j)] = 0
+
+
 
 
 
@@ -75,5 +106,5 @@ for i in range(10):
     myGame.addRandom()
     myGame.printboard()
 
-myGame.left()
+myGame.up()
 myGame.printboard()
