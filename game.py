@@ -14,11 +14,11 @@ class Game():
                             's': self.down,
                             'd': self.right,
                             }
-        self.step(input())
+        self.step('w')
         pass
 
     def printboard(self):
-        
+        print("")
         print("########################")
         print("")
         for j in range(self.boardy):
@@ -46,6 +46,13 @@ class Game():
         y = int((index-x)/4)
         return x, y
 
+    def getUserInput(self):
+        entered = input()
+        if (entered == 'w' or entered == 'a' or entered == 's' or entered == 'd' or entered == 'q'):
+            return entered
+        else:
+            print("That is not valid input, try again!")
+            return self.getUserInput()
     
     def step(self, action):
         put_random=True
@@ -64,7 +71,7 @@ class Game():
 
         self.printboard()
         if self.human:
-            new_action = input()
+            new_action = self.getUserInput()
             if new_action == 'q':
                 self.endGame()
                 return
