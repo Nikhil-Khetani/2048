@@ -6,18 +6,20 @@ import torch.nn.functional as F
 import numpy as np
 import math
 import random
-
+import matplotlib.pyplot as plt
 from collections import namedtuple
 
 
 image_size=84
-batch_size=32
+batch_size=1
 lr=1e-6
 gamma=0.99
 initial_epsilon=0.1
 final_epsilon=1e-4
-num_iters=2000000
+num_iters=20
 #replay_memory_size=50000
+eps = []
+history= []
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print('Using {} device'.format(device))
@@ -105,37 +107,49 @@ def train(episodes):
         while type(output) == list:
             state = next_state
             pred = model(state)
-            action = moves[torch.argmax(pred).item()]
+            action = torch.argmax(pred)
+            print(action)
+            move = moves[action.item()]
             epsilon = final_epsilon+((episodes-episode)*(initial_epsilon-final_epsilon)/episodes)
             take_random_action = random.random()<=epsilon
             if take_random_action:
                 print('random')
-                action = moves[random.randint(0,3)]
+                move = moves[random.randint(0,3)]
             #else:
                 #action=torch.argmax(pred)
 
 
-            output = new_game.step(action)
-            next_state = torch.Tensor(np.array([math.log2(i) if i!=0 else i for i in output]))
-            #next_state = math.log2(np.array(output))
+            output = new_game.step(move)
+            
 
             if new_game.getTerminal():
-                reward = -1
+                reward = 0
+                output = new_game.getBoard()
             else:
                 reward = calcReward(next_state)
-
+                
+            next_state = torch.Tensor(np.array([math.log2(i) if i!=0 else i for i in output]))
+            #next_state = math.log2(np.array(output))
             mem.push(state,action,next_state,reward) # might need endgame in list
 
             if len(mem)>64:
-                batch = mem.sample(batch_size)
+                transitions = mem.sample(batch_size)
+                #print(batch)
+                #state_batch, action_batch, reward_batch, next_state_batch = zip(*batch)
+                batch = Transition(*zip(*transitions))
                 print(batch)
-                state_batch, action_batch, reward_batch, next_state_batch = zip(*batch)
-            
+                non_final_next_states = torch.cat([s for s in batch.next_state if s is not None])
+                next_state_batch = torch.cat(batch.next_state)                                            
+                state_batch = torch.cat(batch.state)
+                action_batch = torch.stack(batch.action) 
+                reward_batch = torch.Tensor(batch.reward)
+
+                
                 current_prediction_batch = model(state_batch)
                 next_prediction_batch = model(next_state_batch)
-                y_batch = torch.cat(tuple(reward + gamma * torch.max(prediction) for reward, prediction in zip(reward_batch, next_prediction_batch)))
+                y_batch = torch.stack(tuple(reward + gamma * torch.max(prediction) for reward, prediction in zip(reward_batch, next_prediction_batch)))
 
-                q_value = torch.sum(current_prediction_batch * action_batch, dim=1)
+                q_value = torch.sum(current_prediction_batch * action_batch, dim=-1)
                 optimizer.zero_grad()
                 # y_batch = y_batch.detach()
                 loss = criterion(q_value, y_batch)
@@ -151,9 +165,12 @@ def train(episodes):
 
             if new_game.getTerminal():
                 break
-
+        eps.append(episode)
+        history.append(new_game.getTurn())
         episode+=1
-
+    
     pass
 
-train(100)
+train(num_iters)
+plt.plot(np.array(eps),np.array(history))
+plt.show()
