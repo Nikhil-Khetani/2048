@@ -16,7 +16,7 @@ lr=1e-6
 gamma=0.99
 initial_epsilon=0.1
 final_epsilon=1e-4
-num_iters=20
+num_iters=100
 #replay_memory_size=50000
 eps = []
 history= []
@@ -77,7 +77,7 @@ class ReplayMemory(object):
     def __len__(self):
         return len(self.memory)
 
-def calcReward(state):
+def calcReward(state, last_total):
     empties = 0
     total = 0
     highest = 0 
@@ -87,7 +87,7 @@ def calcReward(state):
         else:
             total+=i
         highest = max(highest,i)
-    return (total+highest)/(empties+highest)
+    return total-last_total-0.5, total
 
 
 
@@ -95,9 +95,10 @@ def calcReward(state):
 def train(episodes):
     episode = 0
     moves = ['w','a','s','d']
-    mem = ReplayMemory(10000)
+    mem = ReplayMemory(50000)
     model = DQN().to(device)
     episode = 0
+    last_total = 0
     while episode<episodes:
         new_game = Game2048(human=False)
         optimizer = torch.optim.Adam(model.parameters(), lr=1e-6)
@@ -123,11 +124,10 @@ def train(episodes):
             
 
             if new_game.getTerminal():
-                reward = 0
+                reward = -1
                 output = new_game.getBoard()
             else:
-                reward = calcReward(next_state)
-                
+                reward, last_total = calcReward(next_state,last_total)
             next_state = torch.Tensor(np.array([math.log2(i) if i!=0 else i for i in output]))
             #next_state = math.log2(np.array(output))
             mem.push(state,action,next_state,reward) # might need endgame in list
@@ -168,7 +168,13 @@ def train(episodes):
         eps.append(episode)
         history.append(new_game.getTurn())
         episode+=1
-    
+    checkpoint_path = "v1_TrainAI_ep{}.pth".format(int(episode))
+    torch.save({
+        'checkpoint_episode': episode,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+        'average_length': history
+        }, checkpoint_path)
     pass
 
 train(num_iters)
