@@ -17,7 +17,15 @@ class Game2048():
                             }
         self.step('w')
         pass
-
+    
+    def getBoard(self):
+        return self.board
+    
+    def getTurn(self):
+        return self.turn
+    
+    def getTerminal(self):
+        return self.terminal
     def printboard(self):
         print("################################################")
         print("")
@@ -77,7 +85,7 @@ class Game2048():
             new_action = self.getUserInput()
             if new_action == 'q':
                 self.endGame()
-                return
+                return 0
             self.step(new_action)
 
         return self.board
