@@ -1,4 +1,4 @@
-from game import *
+from game_v2 import *
 from random import randint
 import torch
 import torch.nn as nn
@@ -16,7 +16,7 @@ lr=1e-6
 gamma=0.99
 initial_epsilon=0.1
 final_epsilon=1e-4
-num_iters=100
+num_iters=500
 #replay_memory_size=50000
 eps = []
 history= []
@@ -99,6 +99,7 @@ def train(episodes):
     model = DQN().to(device)
     episode = 0
     last_total = 0
+    losses=[]
     while episode<episodes:
         new_game = Game2048(human=False)
         optimizer = torch.optim.Adam(model.parameters(), lr=1e-6)
@@ -108,7 +109,14 @@ def train(episodes):
         while type(output) == list:
             state = next_state
             pred = model(state)
-            action = torch.argmax(pred)
+
+            legal_moves = new_game.getLegalMoves()
+            for i in range(4):
+                action = torch.argmax(pred)
+                if legal_moves[action]==1:
+                    break
+                else:
+                    pred[action]=0
             print(action)
             move = moves[action.item()]
             epsilon = final_epsilon+((episodes-episode)*(initial_epsilon-final_epsilon)/episodes)
@@ -156,6 +164,7 @@ def train(episodes):
                 loss.backward()
                 optimizer.step()
 
+                losses.append(loss)
                 print("Iteration: {}/{}, Action: {}, Loss: {}, Epsilon {}, Reward: {}, Q-value: {}".format(
                 episode + 1,
                 num_iters,
@@ -173,7 +182,8 @@ def train(episodes):
         'checkpoint_episode': episode,
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
-        'average_length': history
+        'average_length': history,
+        'losses': losses
         }, checkpoint_path)
     pass
 
