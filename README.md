@@ -4,7 +4,9 @@ A version of the popular game "2048" that can be played in the command line and 
 #### Update 
 
 ## Instructions
-
+```
+python game.py
+```
 ## Prerequisites
 This project only requires standard Python libraries to play the game.
 To train the reinforcement learning agent, PyTorch and NumPy are required:
