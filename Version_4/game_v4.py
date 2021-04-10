@@ -22,11 +22,11 @@ class Game_2048():
         if depth != None:
             self.depth = depth
         if self.terminal:
-            self.survive_prob = 0
-            return 0
+            self.survive_prob = float(0.0)
+            return float(000.0)
         elif self.depth==0:
-            self.survive_prob = 1
-            return 1
+            self.survive_prob = float(100)
+            return float(100.0)
         if not self.explored:
             if self.turn == 'p':
                 opposite_turn = 'r'
@@ -44,10 +44,11 @@ class Game_2048():
         for child in self.children:
             self.children_survive_prob.append(child.explore())
         if self.turn == 'p':
-            self.survive_prob = max(self.children_survive_prob)
+            #self.survive_prob = max(self.children_survive_prob)
+            self.survive_prob = max(float(0.0),float(sum([child_survive_prob/len(self.children) for child_survive_prob in self.children_survive_prob])))
             return self.survive_prob
         else:
-            self.survive_prob = sum([child_survive_prob/len(self.children) for child_survive_prob in self.children_survive_prob])
+            self.survive_prob = min(float(100.0),float(sum([child_survive_prob/len(self.children) for child_survive_prob in self.children_survive_prob])))
             return self.survive_prob
         
     def printChildrenSurviveProb(self):
@@ -55,7 +56,7 @@ class Game_2048():
         print('Len self.children {}'.format(len(self.children)))
         for i in range(len(self.legal_moves)):
             print('{} : Survival = {}'.format(self.legal_moves[i], self.children[i].survive_prob))
-
+            
 
 
     def findLegalMoves(self):
@@ -160,15 +161,32 @@ class Game_2048():
         print("################################################")
         return
 
+    def getSurvival(self):
+        return self.survive_prob
+        
+
 
 if __name__ == '__main__':
     
-    myGame = Game_2048(depth = 3)
+    myGame = Game_2048(board = [32,8,32,8,128,16,32,8,16,16,32,4,0,4,0,0],depth = 5)
+    turn = 0
     while myGame.terminal == False:
         myGame.printboard()
-        num_to_explore = max(11-myGame.board.count(0),5)
-        print('survival prob = {}'.format(myGame.explore(num_to_explore)))
+        num_to_explore = max(12-myGame.board.count(0),5)
+        print('num_to_explore: {}'.format(num_to_explore))
+        myGame.explore(num_to_explore)
+        print('Survival = {}'.format(myGame.getSurvival()))
+        '''
+        if myGame.getSurvival()>0:
+            while max(myGame.children_survive_prob)<50:
+                num_to_explore+=1
+                print('num_to_explore: {}'.format(num_to_explore))
+                myGame.explore(num_to_explore)
+                print('Survival = {}'.format(myGame.getSurvival()))
+        '''
         myGame.printChildrenSurviveProb()
         myGame = myGame.children[max(zip(myGame.children_survive_prob, range(len(myGame.children_survive_prob))))[1]]
+        turn+=1
+        print('Turn: {}'.format(turn))
         
 
