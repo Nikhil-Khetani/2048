@@ -5,7 +5,7 @@ A version of the popular game "2048" that can be played in the command line and 
 The DQN algorithm consistently gets above 2048 after just a few episodes of training. However, following this, performance does not seem to improve consistently. 
 
 #### Version 4
-As opposed to methods used in previous versions, here a pure Monte Carlo game search (tree) is used to determine which move to take
+As opposed to methods used in previous versions, here a pure Monte Carlo game search (tree) is used to determine which move to take.
 
 ## Instructions
 ```
