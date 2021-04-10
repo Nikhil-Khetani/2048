@@ -210,7 +210,7 @@ def train(episodes):
         eps.append(episode)
         history.append(new_game.getTurn())
         episode+=1
-    checkpoint_path = "v1_TrainAI_ep{}.pth".format(int(episode))
+    checkpoint_path = "Version_3/v3_TrainAI_ep{}.pth".format(int(episode))
     torch.save({
         'checkpoint_episode': episode,
         'model_state_dict': model.state_dict(),
